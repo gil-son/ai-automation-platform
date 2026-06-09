@@ -85,7 +85,7 @@ ai-automation-platform/
 │   ├── config/                  # Settings and constants
 │   │
 │   ├── api/
-│   │   ├── routes/              # HTTP endpoints (chat, agents, RAG)
+│   │   ├── routes/              # HTTP endpoints (chat, agents, RAG, evaluation)
 │   │   └── schemas/             # Request/response data shapes
 │   │
 │   ├── core/
@@ -169,8 +169,40 @@ SELECT * FROM pg_extension WHERE extname = 'vector';
 
 **Option 2 — Terminal**
 
+Confirm pgvector extension works:
+
+```bash
+docker exec -it pgvector-db psql -U postgres -d ai_platform -c "SELECT * FROM pg_extension WHERE extname = 'vector';"
+```
+
+Outcomes:
+
+```
+  oid  | extname | extowner | extnamespace | extrelocatable | extversion | extconfig | extcondition 
+-------+---------+----------+--------------+----------------+------------+-----------+--------------
+ 16385 | vector  |       10 |         2200 | t              | 0.8.2      |           | 
+(1 row)
+```
+
+Confirm all 6 tables exist:
+
 ```bash
 docker exec -it pgvector-db psql -U postgres -d ai_platform -c "\dt"
+```
+
+Outcomes:
+
+```
+             List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ public | agents        | table | postgres
+ public | clients       | table | postgres
+ public | conversations | table | postgres
+ public | documents     | table | postgres
+ public | messages      | table | postgres
+ public | users         | table | postgres
+(6 rows)
 ```
 
 **If the tables are missing**, paste the contents of `postgres/schema.sql` directly into the Adminer query box and execute. This creates all tables manually without needing to restart Docker.
