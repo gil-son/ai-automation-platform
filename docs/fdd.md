@@ -228,6 +228,89 @@ multipart/form-data:
 - None for basic health check
 - May touch any table for detailed connectivity test (typically users table for simplest query)
 
+### 6. POST /rag/evaluate
+**Purpose**: Evaluate the performance of the RAG system using lightweight local metrics
+
+**Request Schema**:
+```json
+{
+  "agent_id": "integer (required)",
+  "test_queries": [
+    {
+      "query": "string (required)",
+      "expected_relevant_document_ids": "array of integers (optional)",
+      "expected_answer_contains": "array of strings (optional)"
+    }
+  ],
+  "metrics": "array of strings (optional, defaults to ['precision', 'relevance', 'latency'])",
+  "top_k": "integer (optional, defaults to 5)"
+}
+```
+
+**Response Schema**:
+```json
+{
+  "evaluation_id": "integer",
+  "agent_id": "integer",
+  "timestamp": "timestamp",
+  "overall_scores": {
+    "precision": "float (0-1)",
+    "relevance": "float (0-1)",
+    "latency_ms": "float"
+  },
+  "query_results": [
+    {
+      "query": "string",
+      "precision": "float (0-1)",
+      "relevance": "float (0-1)",
+      "latency_ms": "float",
+      "retrieved_documents": [
+        {
+          "document_id": "integer",
+          "filename": "string",
+          "score": "float"
+        }
+      ],
+      "expected_relevant_found": "integer",
+      "total_expected_relevant": "integer"
+    }
+  ],
+  "status": "string (enum: ['completed', 'failed'])",
+  "error_message": "string (optional)"
+}
+```
+
+**Business Rules**:
+- Requires authentication context to verify agent ownership
+- Agent must exist and belong to the authenticated user
+- If test_queries is empty, returns error 400
+- For each test query:
+  - Performs RAG search using the agent's knowledge base
+  - Measures latency from query submission to result retrieval
+  - Calculates precision as (number of expected relevant documents found) / (total number of retrieved documents)
+  - Calculates relevance based on whether expected answer phrases are present in retrieved content (if expected_answer_contains provided)
+  - If expected_relevant_document_ids provided, calculates precision based on overlap with retrieved documents
+- Overall scores are averages across all test queries
+- Stores evaluation run and results in the evaluations table for historical tracking
+- Does not require external APIs or services - uses only local Ollama models for embeddings and LLM
+- Evaluation does not modify any existing data - read-only operation on documents and embeddings
+
+**Error Cases**:
+- 400: Missing required agent_id field
+- 400: Missing or empty test_queries array
+- 404: Specified agent_id not found or doesn't belong to user
+- 400: Invalid metrics values (must be subset of ['precision', 'relevance', 'latency'])
+- 400: Invalid top_k value (must be positive integer)
+- 500: Ollama service unavailable for embedding generation
+- 500: Vector database query failure
+- 500: Internal server error during evaluation processing
+
+**DB Tables Touched**:
+- evaluations (INSERT new evaluation run and results)
+- agents (READ to verify ownership and get agent details)
+- documents (READ during RAG search for relevant context - no modifications)
+- users (READ to get user_id from auth context)
+
 ## RAG Pipeline Flow
 
 1. **Document Ingestion**:
