@@ -58,3 +58,17 @@ CREATE TABLE IF NOT EXISTS messages (
     sent_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Evaluation runs for RAG performance monitoring
+CREATE TABLE IF NOT EXISTS evaluations (
+    id SERIAL PRIMARY KEY,
+    agent_id INTEGER REFERENCES agents(id) ON DELETE CASCADE,
+    timestamp TIMESTAMP DEFAULT NOW(),
+    overall_precision FLOAT, -- Average precision across test queries (0-1)
+    overall_relevance FLOAT, -- Average relevance across test queries (0-1)
+    overall_latency_ms FLOAT, -- Average latency in milliseconds
+    status TEXT NOT NULL, -- 'completed' or 'failed'
+    error_message TEXT, -- Error message if status is 'failed'
+    test_configuration JSONB, -- Stores the test queries and metrics configuration
+    detailed_results JSONB -- Stores per-query results and metrics
+);
