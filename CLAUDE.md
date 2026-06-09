@@ -65,7 +65,7 @@ The application follows a modular architecture organized around these key compon
 
 1. **Entry Point**: `app/main.py` - FastAPI application initialization
 2. **API Layer**: `app/api/` - HTTP endpoints organized by feature
-   - `routes/` - Endpoint implementations (chat, agents, RAG, integrations)
+   - `routes/` - Endpoint implementations (chat, agents, RAG, integrations, evaluation)
    - `schemas/` - Pydantic models for request/response validation
 3. **Core Services**: `app/core/` - Business logic and AI functionality
    - `llm/` - Ollama client integration and prompt management
