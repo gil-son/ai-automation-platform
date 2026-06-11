@@ -159,7 +159,7 @@ Then run this query to check all tables exist:
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 ```
 
-You should see 6 tables: `users`, `agents`, `conversations`, `documents`, `clients`, `messages`.
+You should see 7 tables: `users`, `agents`, `conversations`, `documents`, `clients`, `messages`, `evaluations`.
 
 Check the vector extension is active:
 
@@ -184,7 +184,7 @@ Outcomes:
 (1 row)
 ```
 
-Confirm all 6 tables exist:
+Confirm all 7 tables exist:
 
 ```bash
 docker exec -it pgvector-db psql -U postgres -d ai_platform -c "\dt"
@@ -200,9 +200,10 @@ Outcomes:
  public | clients       | table | postgres
  public | conversations | table | postgres
  public | documents     | table | postgres
+ public | evaluations   | table | postgres
  public | messages      | table | postgres
  public | users         | table | postgres
-(6 rows)
+(7 rows)
 ```
 
 **If the tables are missing**, paste the contents of `postgres/schema.sql` directly into the Adminer query box and execute. This creates all tables manually without needing to restart Docker.
@@ -217,6 +218,7 @@ Outcomes:
 | POST | `/agents` | Create a new agent |
 | POST | `/rag/ingest` | Upload files to the knowledge base |
 | POST | `/integrations/send` | Send a message via Gmail or WhatsApp |
+| POST | `/rag/evaluate` | Evaluate the performance of the RAG system |
 | GET | `/health` | Check if everything is running |
 
 Full API docs available at `http://localhost:8000/docs` when the app is running.
