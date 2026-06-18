@@ -11,10 +11,10 @@ The AI Automation Platform currently uses manual decision-making logic (as descr
 4. **Action Determination**: If communication intent detected with sufficient confidence: validate recipient, generate message content, execute via integration (Gmail/WhatsApp), record message attempt. If information request: use RAG context to inform LLM response. If conversational: generate response based on conversation history and agent personality.
 5. **Response Generation**: Construct final prompt including agent system instructions/personality, conversation history, relevant context from RAG, user's current message; send prompt to Llama 3.2 via Ollama; receive and post-process response; store agent response in conversations table; return response to user.
 
-As the agent's capabilities grow, this manual logic becomes difficult to maintain and extend. LangGraph provides a framework for building stateful, multi-actor applications with LLMs, making it ideal for agent orchestration. It allows modeling agent behavior as a graph of nodes (actions, decisions) and edges (transitions), with built-in state management.
+This approach requires stateful multi-step reasoning, conditional branching based on intermediate results, and seamless tool execution integration. As the agent's capabilities grow, this manual logic becomes difficult to maintain and extend. LangGraph provides a framework for building stateful, multi-actor applications with LLMs, making it ideal for agent orchestration. It allows modeling agent behavior as a graph of nodes (actions, decisions) and edges (transitions), with built-in state management.
 
 ## Decision
-We will replace the manual decision-making logic with LangGraph to orchestrate agent behavior. The agent's state, decisions, and actions will be modeled as nodes and edges in a LangGraph StateGraph. This enables:
+We will replace the manual decision-making logic with LangGraph to orchestrate agent behavior. The agent's state, decisions, and actions will be modeled as nodes and edges in a LangGraph StateGraph with specific nodes for retrieval, decision, response generation, and tool execution. This enables:
 - Clear separation of concerns (each node has a single responsibility)
 - Stateful interactions across multiple steps
 - Conditional branching based on agent state and tool outputs
@@ -36,6 +36,7 @@ We will replace the manual decision-making logic with LangGraph to orchestrate a
 2. **Migration Effort**: Requires rewriting existing decision-making logic into a graph-based structure.
 3. **Overhead**: Minimal overhead from the LangGraph framework (negligible for typical usage).
 4. **Debugging Complexity**: Debugging distributed workflows can be more complex than linear code, though tooling mitigates this.
+5. **Overkill for Simple Queries**: For simple agent interactions that don't require complex reasoning or tool use, LangGraph may introduce unnecessary complexity compared to direct approaches.
 
 ### Mitigations
 - Provide documentation and examples of LangGraph usage in the codebase.
