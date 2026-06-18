@@ -53,6 +53,17 @@ The API will be running at `http://localhost:8000`
 
 ---
 
+## Docker Compose — Port Mapping
+
+| Host (your machine) | Container port | Service |
+|---|---|---|
+| `localhost:5432` | 5432 | PostgreSQL (pgvector) |
+| `localhost:5001` | 8080 | Adminer |
+| `localhost:3000` | 3000 | Langfuse |
+| `localhost:5433` | 5432 | Langfuse DB |
+
+---
+
 ## Environment variables
 
 Open `.env` and fill in the values below. Everything else has a default.
@@ -207,6 +218,28 @@ Outcomes:
 ```
 
 **If the tables are missing**, paste the contents of `postgres/schema.sql` directly into the Adminer query box and execute. This creates all tables manually without needing to restart Docker.
+
+---
+
+## Architecture Decisions
+
+### ADR-001: Vector Storage Selection
+The platform uses **PostgreSQL with the pgvector extension** for vector storage. This decision was made because it provides:
+- Local-first compliance (all data stays on the user's machine)
+- Operational simplicity (single database for relational and vector data)
+- ACID guarantees and mature tooling
+- Sufficient performance for desktop-class workloads (hundreds/thousands of documents)
+
+The `documents` table includes a `vector(768)` column to store embeddings from the `nomic-embed-text` model.
+
+### ADR-007: Agent Orchestration via LangGraph
+Agent decision-making is orchestrated using **LangGraph**, replacing manual logic with a stateful graph workflow. Benefits include:
+- Clear separation of concerns (nodes for intent analysis, context gathering, action determination, response generation, tool execution)
+- Built-in state management and visualization (via Langfuse integration)
+- Modularity to easily add new tools and decision points
+- Seamless integration with LangChain components and Langfuse for tracing
+
+This architecture leverages the existing LangFuse services (configured in docker-compose.yml) for observability.
 
 ---
 
