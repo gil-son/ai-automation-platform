@@ -86,6 +86,8 @@ The application follows a modular architecture organized around these key compon
 - **Backend**: Python/FastAPI
 - **Database**: PostgreSQL with pgvector extension for vector storage
 - **AI Model**: Llama 3.2 via Ollama (local inference)
+- **Orchestration**: LangChain and LangGraph for agent workflows and LLM integration
+- **Tracing**: Langfuse for distributed tracing and observability
 - **Vector Operations**: pgvector for similarity search
 - **Containerization**: Docker Compose for service orchestration
 

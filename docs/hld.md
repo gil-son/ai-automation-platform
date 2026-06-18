@@ -55,6 +55,7 @@ The AI Automation Platform is a local-first AI assistant that enables users to i
 |                     |     |  +--------------+  |
 +---------------------+     +---------------------+
 ```
+*Note: The Core Services components (LLM, Agents, RAG, Workflows) are now implemented using LangChain and LangGraph, with Langfuse for distributed tracing.*
 
 ## Data Flow
 
@@ -106,10 +107,29 @@ The AI Automation Platform is a local-first AI assistant that enables users to i
 ### AI Model: Llama 3.2 via Ollama
 - **Rationale**: Strong performance for local deployment, good balance of capability/resource usage, permissive license, active community
 - **Alternative Considered**: Mistral, Phi-3 (selected Llama 3.2 for better reasoning capabilities)
+- **Integration**: Using LangChain's ChatOllama for seamless integration with LangChain components
 
 ### Vector Embeddings: nomic-embed-text
 - **Rationale**: 768-dimensional vectors optimized for text search, good performance/quality trade-off, open source
 - **Alternative Considered**: OpenAI embeddings (would violate local-first principle), sentence-transformers (similar performance)
+- **Integration**: Using LangChain embeddings wrapper for nomic-embed-text
+
+### Orchestration Framework: LangChain & LangGraph
+- **Rationale**: Provides standardized interfaces for LLMs, vector stores, and agents; enables complex workflows with state management; supports local-first deployment
+- **Alternative Considered**: Manual pipeline logic (current implementation), LlamaIndex (chosen LangChain for broader ecosystem and LangGraph for agent orchestration)
+- **Components**: 
+  - LangChain for LLM abstraction, embedding integration, and vector store connectivity
+  - LangGraph for agent orchestration, replacing manual decision-making logic
+  - Langfuse integration for tracing and monitoring
+
+### Tracing: Langfuse
+- **Rationale**: Local-first tracing solution that integrates with LangChain/LangGraph; provides observability without external dependencies; complies with privacy requirements
+- **Alternative Considered**: LangSmith (requires external account and data transmission), custom logging (chosen Langfuse for built-in LangChain integration and UI)
+- **Benefits**: 
+  - Automatic tracing of LLM calls, chain executions, and agent operations
+  - Local storage of trace data
+  - Visualization via Langfuse UI (can be run locally via Docker)
+  - Compatibility with LangChain and LangGraph out-of-the-box
 
 ### Containerization: Docker Compose
 - **Rationale**: Simplifies setup of PostgreSQL+pgvector and Adminer, ensures consistent environments, easy local development

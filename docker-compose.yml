@@ -29,5 +29,36 @@ services:
     depends_on:
       - db
 
+  langfuse-db:
+    image: postgres:15
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  langfuse:
+    image: langfuse/langfuse:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - langfuse-db
+    environment:
+      - NEXT_PUBLIC_LANGFUSE_HOST=http://localhost:3000
+      - LANGFUSE_SECRET_KEY=super-secret-secret-key
+      - LANGFUSE_PUBLIC_KEY=public-key
+      - DATABASE_URL=postgresql://postgres:password@langfuse-db:5432/langfuse
+
 volumes:
   pgdata:
+  langfuse-pgdata:
