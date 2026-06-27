@@ -65,23 +65,46 @@ The application follows a modular architecture organized around these key compon
 
 1. **Entry Point**: `app/main.py` - FastAPI application initialization
 2. **API Layer**: `app/api/` - HTTP endpoints organized by feature
-   - `routes/` - Endpoint implementations (chat, agents, RAG, integrations, evaluation)
+   - `routes/` - Endpoint implementations (chat, agents, RAG, integrations, health)
+     - `agents.py`, `chat.py`, `integrations.py`, `rag.py`, `health.py`
    - `schemas/` - Pydantic models for request/response validation
+     - `agents.py`, `chat.py`, `integrations.py`, `rag.py`
 3. **Core Services**: `app/core/` - Business logic and AI functionality
-   - `llm/` - Ollama client integration and prompt management
-   - `agents/` - Agent creation, memory, and decision-making logic
-   - `rag/` - Retrieval-Augmented Generation pipeline (file ingestion, chunking, embedding, search)
-   - `workflows/` - Automation routines and task routing logic
+   - **LLM**: `app/core/llm/`
+     - `model.py` - Ollama client integration
+     - `callback_handler.py` - Callback handling for LLM
+     - `prompts/` - Prompt templates
+       - `agent_prompt.py`, `chat_prompt.py`, `rag_prompt.py`
+   - **Agents**: `app/core/agents/`
+     - `agent.py` - Base agent class
+     - `state.py` - Agent state management
+     - `agent_graph.py` - Agent workflow graph (LangGraph)
+     - `tools/` - Agent tools
+       - `gmail_tool.py`, `whatsapp_tool.py`
+   - **RAG**: `app/core/rag/`
+     - `retrieval_chain.py` - Retrieval-Augmented Generation pipeline
+     - `embedding.py` - Embedding generation
+     - `chunking.py` - Text chunking strategies
+     - `document_processor.py` - Document loading and processing
+     - `vector_store.py` - Vector store interface
+     - `search.py` - Search functionality
+   - **Workflows**: `app/core/workflows/`
+     - `task_router.py` - Routing automation tasks
+     - `automation_workflow.py` - Workflow definitions
+     - `automation_routines.py` - Reusable automation routines
 4. **Integrations**: `app/integrations/` - External service connectors
-   - `gmail/` - Email sending via Gmail API
+   - `gmail/` - Gmail API integration
+     - `gmail_service.py`, `gmail_utils.py`
    - `whatsapp/` - WhatsApp Business API integration
+     - `whatsapp_service.py`, `whatsapp_utils.py`
 5. **Data Layer**: `app/database/` - Persistence layer
    - `postgres/` - Relational data models and operations
+     - `models.py`, `operations.py`
    - `vector_db/` - Vector storage and similarity search using pgvector
+     - `operations.py`, `vector_store.py`
 6. **Data Storage**: `data/` directory for file persistence
    - `raw/` - Original uploaded files
    - `processed/` - Processed chunks after ingestion
-
 ### Key Technologies
 - **Backend**: Python/FastAPI
 - **Database**: PostgreSQL with pgvector extension for vector storage
