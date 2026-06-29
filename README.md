@@ -90,45 +90,79 @@ VECTOR_DB=pgvector
 
 ```
 ai-automation-platform/
-│
 ├── app/
 │   ├── main.py                  # App entry point
-│   ├── config/                  # Settings and constants
-│   │
 │   ├── api/
-│   │   ├── routes/              # HTTP endpoints (chat, agents, RAG, evaluation)
-│   │   └── schemas/             # Request/response data shapes
-│   │
-│   ├── core/
-│   │   ├── llm/                 # Ollama client and prompts
-│   │   ├── agents/              # Agent logic, memory, and tools
-│   │   ├── rag/                 # File ingestion, search, and evaluation
-│   │   └── workflows/           # Automation and task routing
-│   │
-│   ├── integrations/
-│   │   ├── gmail/               # Send emails
-│   │   └── whatsapp/            # Send WhatsApp messages
-│   │
-│   ├── database/
-│   │   ├── postgres/            # User, agent, and conversation data
-│   │   └── vector_db/           # Stores file embeddings for search
-│   │
-│   └── services/                # Business logic layer
-│
-├── data/
-│   ├── raw/                     # Files you upload
-│   └── processed/               # Files after chunking and processing
-│
-├── scripts/
-│   ├── ingest_documents.py      # Load files into the knowledge base
-│   └── evaluate_rag.py          # Test how well the search is working
-│
-├── docs/                        # Architecture and decision records
+│   │   ├── routes/              # API route implementations
+│   │   │   ├── agents.py
+│   │   │   ├── chat.py
+│   │   │   ├── rag.py
+│   │   │   ├── integrations.py
+│   │   │   └── health.py
+│   │   └── schemas/             # Pydantic models for request/response
+│   │       ├── agents.py
+│   │       ├── chat.py
+│   │       ├── integrations.py
+│   │       └── rag.py
+│   ├── core/                    # Core services and AI functionality
+│   │   ├── llm/                 # LLM integration (Ollama)
+│   │   │   ├── model.py
+│   │   │   ├── callback_handler.py
+│   │   │   └── prompts/         # Prompt templates
+│   │   │       ├── agent_prompt.py
+│   │   │       ├── chat_prompt.py
+│   │   │       └── rag_prompt.py
+│   │   ├── agents/              # Agent framework (LangGraph)
+│   │   │   ├── agent.py         # Base agent class
+│   │   │   ├── state.py         # Agent state management
+│   │   │   ├── agent_graph.py   # Agent workflow graph
+│   │   │   └── tools/       # Agent tools (Gmail, WhatsApp)
+│   │   │       ├── gmail_tool.py
+│   │   │       └── whatsapp_tool.py
+│   │   ├── rag/             # Retrieval-Augmented Generation
+│   │   │   ├── document_processor.py
+│   │   │   ├── chunking.py
+│   │   │   ├── embedding.py
+│   │   │   ├── vector_store.py
+│   │   │   ├── search.py
+│   │   │   └── retrieval_chain.py
+│   │   └── workflows/       # Workflow definitions and automation
+│   │       ├── task_router.py
+│   │       ├── automation_workflow.py
+│   │       └── automation_routines.py
+│   ├── database/            # Data layer
+│   │   ├── postgres/        # Relational data models and operations
+│   │   │   ├── models.py
+│   │   │   └── operations.py
+│   │   └── vector_db/       # Vector storage and similarity search (pgvector)
+│   │       ├── vector_store.py
+│   │       └── operations.py
+│   └── integrations/        # External service connectors
+│       ├── gmail/           # Gmail API integration
+│       │   ├── gmail_service.py
+│       │   └── gmail_utils.py
+│       └── whatsapp/        # WhatsApp Business API integration
+│           ├── whatsapp_service.py
+│           └── whatsapp_utils.py
+├── docs/
+│   ├── decisions/               # Architecture Decision Records
+│   │   ├── ADR-001-vector-storage.md
+│   │   ├── ADR-002-local-llm.md
+│   │   ├── ADR-003-framework.md
+│   │   ├── ADR-004-evaluation-strategy.md
+│   │   ├── ADR-005-ollama-langchain.md
+│   │   ├── ADR-006-langfuse-tracing.md
+│   │   └── ADR-007-langgraph-agent.md
+│   ├── fdd.md
+│   ├── hld.md
+│   └── PROGRESS.md
 ├── postgres/
-│   └── schema.sql               # Database schema
+│   └── schema.sql
+├── example.env
 ├── docker-compose.yml
-├── requirements.txt
-└── example.env
+├── README.md
+├── CLAUDE.md
+└── .gitignore
 ```
 
 ---
