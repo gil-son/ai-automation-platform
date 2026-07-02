@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Session Start Checklist
+
+At the start of every session, read docs/PROGRESS.md to understand what has already been implemented before making changes. At the end of every session, update docs/PROGRESS.md to reflect what was completed.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Development Commands
