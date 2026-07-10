@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   db:
@@ -32,8 +30,6 @@ services:
   langfuse-db:
     image: postgres:15
     restart: always
-    ports:
-      - "5433:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -47,17 +43,20 @@ services:
       retries: 5
 
   langfuse:
-    image: langfuse/langfuse:latest
+    image: langfuse/langfuse:2
     restart: always
     ports:
       - "3000:3000"
     depends_on:
-      - langfuse-db
+      langfuse-db:
+        condition: service_healthy
     environment:
-      - NEXT_PUBLIC_LANGFUSE_HOST=http://localhost:3000
+      - DATABASE_URL=postgresql://postgres:password@langfuse-db:5432/langfuse
+      - NEXTAUTH_SECRET=super-secret-nextauth-key
+      - NEXTAUTH_URL=http://localhost:3000
       - LANGFUSE_SECRET_KEY=super-secret-secret-key
       - LANGFUSE_PUBLIC_KEY=public-key
-      - DATABASE_URL=postgresql://postgres:password@langfuse-db:5432/langfuse
+      - SALT=super-secret-salt-key
 
 volumes:
   pgdata:

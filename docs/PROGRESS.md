@@ -1,9 +1,12 @@
 # Implementation Progress Tracker
 
 ## Database Layer
-- [ ] app/database/postgres/models.py, app/database/postgres/operations.py
+- [x] app/database/postgres/models.py, app/database/postgres/operations.py
 - [ ] app/database/vector_db/vector_store.py, app/database/vector_db/operations.py
 - [ ] docker-compose.yml, example.env
+
+## Last session notes
+Updated the User model in app/database/postgres/models.py to match the schema.sql exactly (removed hashed_password, full_name, is_active fields; kept id, name, email, created_at). Updated scripts/test_db.py to use the new User model fields (email and name only). Verified that app/database/postgres/operations.py UserOperations requires no changes as it uses the User model generically.
 
 ## RAG Pipeline
 - [ ] app/core/rag/document_processor.py
@@ -31,4 +34,4 @@
 - [ ] app/api/routes/health.py
 
 ## Last session notes
-Cleaned up duplicate agent.py entry and added missing retrieval_chain.py and callback_handler.py references. File tree confirmed clean — all obsolete manual files (decision_making.py, memory.py, base_tool.py, tool_executor.py, ollama_client.py, prompt_manager.py) removed. Ready to begin Session 1 (Database Layer) implementation.
+Implemented the database layer with SQLAlchemy 2.0 async models for all 7 tables (users, agents, conversations, documents, clients, messages, evaluations) including proper relationships and pgvector support for document embeddings. Created async CRUD operations for each model with specialized query methods. Added database connection setup and session management in __init__.py. All models follow SQLAlchemy 2.0 declarative syntax with proper type hints.
